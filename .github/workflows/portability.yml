@@ -1,0 +1,130 @@
+# Does setup-check.sh actually run on the machines the students have?
+#
+# The lecturer develops on Linux, so macOS and Windows are otherwise unverified.
+# This is the macOS oracle. What it genuinely catches: bash 3.2 constructs, BSD
+# vs GNU differences in sed/date/awk, CRLF damage, unbound-array errors under
+# `set -u`. What it cannot catch, and what the beta testers are for: `wsl
+# --install`, BIOS virtualization, Docker Desktop's WSL integration, VS Code
+# Remote-WSL.
+name: portability
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  runs-everywhere:
+    name: ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            bash: bash
+          # Students run the stock /bin/bash, which on macOS is 3.2.57 and always
+          # will be. The runner also has a Homebrew bash 5 ahead of it on PATH, so
+          # naming the path explicitly is the whole point of this entry.
+          - os: macos-latest
+            bash: /bin/bash
+          # Git Bash. Not the recommended Windows path — that is WSL2 Ubuntu, which
+          # is what ubuntu-latest already covers — but it is where an off-path
+          # student ends up, and it is where CRLF damage shows itself.
+          - os: windows-latest
+            bash: bash
+
+    steps:
+      # Pinned to floating major tags so security patches arrive without edits.
+      # Both run on node24: node20 actions emit a deprecation warning, and this is
+      # the first green check sixty-two students will ever see. Note that
+      # astral-sh/setup-uv stopped publishing floating major tags after v7 — the
+      # newest exact release is v10.x, so moving past v7 means pinning a full
+      # version and bumping it by hand.
+      - uses: actions/checkout@v7
+
+      - uses: astral-sh/setup-uv@v7
+        with:
+          python-version: "3.13"
+
+      - name: Which bash is this?
+        shell: bash
+        run: ${{ matrix.bash }} --version
+
+      - name: Run the check
+        shell: bash
+        # The script exits non-zero here by design: a runner has no GitHub SSH key
+        # and no git identity, so those rows are red. What is being tested is that
+        # the script RUNS and produces a well-formed report, not that it passes.
+        run: |
+          set -o pipefail
+          ${{ matrix.bash }} scripts/setup-check.sh > run.log 2>&1 || true
+          cat run.log
+
+      - name: The report is well-formed
+        shell: bash
+        run: |
+          set -eu
+          test -f setup-report.md || { echo "FAIL: no setup-report.md was written"; exit 1; }
+          echo "--- setup-report.md ---"
+          cat setup-report.md
+
+          fail=0
+          for row in \
+            "Shell: bash" \
+            "uv installed" \
+            "Python 3.13 available to uv" \
+            "PyPI reachable" \
+            "git installed" \
+            "git identity set" \
+            "GitHub SSH authenticates" \
+            "Docker daemon reachable"
+          do
+            if ! grep -qF "$row" setup-report.md; then
+              echo "FAIL: report is missing the row '$row'"
+              fail=1
+            fi
+          done
+
+          # A bash-3.2 or BSD-tool breakage shows up as an error on stderr rather
+          # than a missing row, so fail on those too.
+          if grep -qEi "unbound variable|bad substitution|syntax error|command not found: |illegal option" run.log; then
+            echo "FAIL: the script emitted a shell error:"
+            grep -nEi "unbound variable|bad substitution|syntax error|command not found: |illegal option" run.log
+            fail=1
+          fi
+
+          exit "$fail"
+
+      - name: uv and PyPI actually passed on this runner
+        shell: bash
+        # These two rows have no excuse to be red on a hosted runner with uv
+        # installed. If they are, the check is wrong, not the machine.
+        run: |
+          set -eu
+          grep -E '^\| uv installed .*\| pass \|' setup-report.md
+          grep -E '^\| PyPI reachable .*\| pass \|' setup-report.md
+
+  fails-when-it-should:
+    name: negative test (no uv)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Exits non-zero and explains how to install uv
+        shell: bash
+        run: |
+          set -u
+          env PATH=/usr/bin:/bin bash scripts/setup-check.sh > run.log 2>&1 && {
+            echo "FAIL: expected a non-zero exit with uv missing"
+            exit 1
+          }
+          grep -qF "astral.sh/uv/install.sh" setup-report.md || {
+            echo "FAIL: the uv row is red but does not say how to fix it"
+            exit 1
+          }
+          echo "OK: exits non-zero and names the fix"

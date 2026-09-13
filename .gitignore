@@ -1,0 +1,4 @@
+# setup-check.sh writes its report into whatever directory you run it from, which
+# is normally this clone. Keeping it out of `git status` matters in the one session
+# where `git status` is being taught.
+setup-report.md
