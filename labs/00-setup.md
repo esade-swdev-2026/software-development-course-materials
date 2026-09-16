@@ -59,12 +59,21 @@ wsl --install
 ```
 
 Reboot when it asks. On the way back up it installs Ubuntu and asks you to pick a
-username and password — this is your **Linux** account, unrelated to Windows. Then, in the
-Ubuntu shell:
+username and password — this is your **Linux** account, unrelated to Windows.
+
+> **The password looks like it is not being typed.** No asterisks, no dots, no cursor
+> movement. That is normal on Linux, not a dead keyboard. Type it and press Enter.
+
+Then, in the Ubuntu shell:
 
 ```bash
 sudo apt update && sudo apt upgrade -y
 ```
+
+> **Expected noise during the upgrade.** Lines like `Failed to get properties: Transport
+> endpoint is not connected` or `Failed to connect to system scope bus via local
+> transport: Connection refused` are harmless: WSL2 runs without the full `systemd`
+> service manager those triggers expect. The packages upgraded fine.
 
 - **WSL2, not WSL1.** `wsl --install` gives you WSL2 by default now. Check with
   `wsl -l -v` in PowerShell — the version column must say `2`. If it says `1`:
@@ -79,11 +88,26 @@ sudo apt update && sudo apt upgrade -y
 ### 2. VS Code + Remote-WSL
 
 Install [VS Code](https://code.visualstudio.com/) on Windows — the normal Windows
-installer. Then install these extensions: **WSL**, **Python**, **Ruff**.
+installer. Then install the **WSL** extension, which is the one that belongs on the
+Windows side.
 
-From your Ubuntu shell, in a project folder, run `code .` — VS Code opens on Windows but
-runs its language tools inside WSL. The bottom-left corner shows `WSL: Ubuntu` when it is
-connected correctly.
+Now, from your Ubuntu shell, in a project folder, run:
+
+```bash
+code .
+```
+
+VS Code opens on Windows but runs its language tools inside WSL; the first run also
+downloads the VS Code Server into your Ubuntu. The bottom-left corner shows `WSL: Ubuntu`
+when it is connected correctly.
+
+**Only now** install the **Python** and **Ruff** extensions (`Ctrl Shift X`). Order
+matters: extensions installed before you connect land on the Windows side, and an
+extension on the Windows side does not run in a WSL window — Ruff will sit there linting
+nothing and you will wonder why the editor never flags what CI rejects. Check each one
+appears under the
+**`WSL: Ubuntu — Installed`** heading in the Extensions pane; if it shows an
+**Install in WSL: Ubuntu** button instead, click it.
 
 ### 3. uv
 
@@ -163,9 +187,13 @@ Apple Silicon (M1/M2/M3/M4) needs nothing special anywhere in this lab. Neither 
 
 ### 2. VS Code
 
-Install [VS Code](https://code.visualstudio.com/) and the **Python** and **Ruff**
-extensions. You do **not** need the WSL extension — that is a Windows-only thing; you are
-already native.
+Download [VS Code](https://code.visualstudio.com/), then **drag it out of `~/Downloads`
+and into `/Applications`** before you open it. A browser download leaves the app in
+Downloads, and the `code`-command step below then fails with a permission error that does
+not say what it wants.
+
+Install the **Python** and **Ruff** extensions. You do **not** need the WSL extension —
+that is a Windows-only thing; you are already native.
 
 To get the `code` command in your terminal: open VS Code, press `⌘ Shift P`, type
 `Shell Command: Install 'code' command in PATH`, and run it.
@@ -325,7 +353,26 @@ is a to-do list for you; Actions checks the repository.
 
 ## Troubleshooting — the ones that actually happen
 
-### 1. `wsl --install` fails, or Ubuntu will not start *(Windows)*
+Search this table for the text your machine actually printed, not for what you think the
+problem is.
+
+| What you see | Where |
+|---|---|
+| `wsl --install` fails, or Ubuntu never appears | §1 |
+| "This app can't run on your PC" when you open Ubuntu | §9 |
+| `Failed to connect to system scope bus` during `apt upgrade` | not an error — Windows step 1 |
+| `docker: command not found` inside WSL | §2 |
+| `permission denied ... unix:///var/run/docker.sock` | §11 |
+| "Docker Desktop cannot be opened because the developer cannot be verified" | §7 |
+| `Are you sure you want to continue connecting (yes/no/[fingerprint])?` | §10 |
+| `Permission denied (publickey)`, or `git push` asks for a password | §3 |
+| `uv: command not found` | §4 |
+| Permission errors from the `uv` installer, but `uv` then works | §4 |
+| Everything times out — VPN, proxy, managed laptop | §5 |
+| `$'\r': command not found`, or `bash\r: No such file or directory` | §6 |
+| `! [rejected] ... (non-fast-forward)` | §8 |
+
+### 1. `wsl --install` fails, or Ubuntu never installs *(Windows)*
 
 Virtualization is disabled in your BIOS/UEFI. Reboot, enter firmware setup (usually `F2`,
 `F10`, `Del` or `Esc` during boot), and enable **Intel VT-x** / **AMD-V** /
@@ -333,11 +380,17 @@ Virtualization is disabled in your BIOS/UEFI. Reboot, enter firmware setup (usua
 in Windows: `wsl --install --no-distribution` after enabling it in *Turn Windows features
 on or off*.
 
+This entry is for `wsl --install` itself failing. If the install *succeeded* but Ubuntu
+will not open, see §9.
+
 ### 2. `docker: command not found` inside WSL, but Docker Desktop is running *(Windows)*
 
 Docker Desktop is not sharing itself with your WSL distro. Docker Desktop → **Settings →
 Resources → WSL integration** → enable your Ubuntu distro → **Apply & restart**. Open a new
 Ubuntu shell.
+
+If `docker` is found but refuses with *permission denied*, that is a different problem —
+see §11.
 
 ### 3. `git push` asks for a username and password, or `Permission denied (publickey)`
 
@@ -363,7 +416,14 @@ source $HOME/.local/bin/env       # works for this session, in any shell
 
 To make it permanent, add `export PATH="$HOME/.local/bin:$PATH"` to the right file:
 `~/.bashrc` if `$SHELL` says bash (WSL2 Ubuntu, most Linux), `~/.zshrc` if it says zsh
-(**every recent macOS**).
+(**every recent macOS**). The `Login shell` line in your setup report is the same
+information.
+
+**A related but harmless case.** The installer may print permission errors for
+`~/.bash_profile` or `~/.config/fish/conf.d` — startup files for shells you do not use. If
+`uv --version` then works in a **new** terminal, those two messages are finished business
+and nothing needs fixing. This is the exception, not the rule: everywhere else in this
+course, red text means something is wrong and you read it.
 
 ### 5. Everything times out — corporate laptop, VPN, or proxy
 
@@ -403,3 +463,54 @@ your own branch and push that instead:
 git switch -c setup/<your-github-username>
 git push -u origin setup/<your-github-username>
 ```
+
+### 9. "This app can't run on your PC", or Ubuntu will not start after the reboot *(Windows)*
+
+`wsl --install` finished, but the Start menu entry is a placeholder Windows created before
+the Ubuntu image finished downloading. From **PowerShell as Administrator**:
+
+```powershell
+wsl --update
+wsl --install -d Ubuntu
+```
+
+Then open Ubuntu again. If instead `wsl --install` itself is the command that failed, you
+have the other problem — see §1.
+
+### 10. `Are you sure you want to continue connecting (yes/no/[fingerprint])?`
+
+```
+The authenticity of host 'github.com (140.82.121.3)' can't be established.
+ED25519 key fingerprint is SHA256:+DiY3wvvV6TuJJhbpZisF/zLDA0zPMSvHdkr4UvCOqU.
+Are you sure you want to continue connecting (yes/no/[fingerprint])?
+```
+
+This is the first time your machine has ever talked to `github.com`, and SSH is asking you
+to confirm you trust the server. It is not an error and it says nothing about your key.
+Type `yes` — the whole word — and press Enter. You will not be asked again.
+
+It happens on **every** operating system, at the `ssh -T git@github.com` step. The setup
+check script never shows it to you, because it accepts new hosts on its own.
+
+### 11. `permission denied while trying to connect to the Docker daemon socket` *(Windows)*
+
+```
+docker: permission denied while trying to connect to the Docker daemon socket
+at unix:///var/run/docker.sock
+```
+
+Docker is installed and shared with WSL — see §2 if it is not — but your Linux user is not
+in the `docker` group. In the Ubuntu shell:
+
+```bash
+sudo usermod -aG docker $USER
+```
+
+Then, from **PowerShell**, stop the whole WSL virtual machine:
+
+```powershell
+wsl --shutdown
+```
+
+Opening a new shell is not enough; group membership is only picked up when the VM itself
+restarts. Reopen Ubuntu and run `docker run --rm hello-world` again.

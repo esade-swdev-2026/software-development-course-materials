@@ -75,7 +75,8 @@ jobs:
 
           fail=0
           for row in \
-            "Shell: bash" \
+            "Login shell:" \
+            "Script ran under: bash" \
             "uv installed" \
             "Python 3.13 available to uv" \
             "PyPI reachable" \
@@ -99,6 +100,21 @@ jobs:
           fi
 
           exit "$fail"
+
+      - name: A Mac is not told to use WSL2
+        if: runner.os == 'macOS'
+        shell: bash
+        # The hosted macOS runner has no Docker, so the Docker row is red here and
+        # its fix hint is what a student's Mac shows. Beta testers on macOS got the
+        # Windows hint ("the WSL2 backend") until the hint branched on uname -s.
+        run: |
+          set -eu
+          row="$(grep -F 'Docker daemon reachable' setup-report.md)"
+          echo "$row"
+          if printf '%s' "$row" | grep -q 'WSL'; then
+            echo "FAIL: the macOS Docker hint mentions WSL"
+            exit 1
+          fi
 
       - name: uv and PyPI actually passed on this runner
         shell: bash

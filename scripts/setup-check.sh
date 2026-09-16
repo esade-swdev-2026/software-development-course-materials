@@ -31,6 +31,11 @@ set -u
 REPORT="setup-report.md"
 now="$(date -u '+%Y-%m-%d %H:%M UTC')"
 os="$(uname -s) $(uname -m)"
+# Two different things, and students conflate them: $SHELL is the login shell
+# whose startup file uv edited (zsh on every recent macOS), while this script
+# always runs under bash. Reporting only $BASH_VERSION made every macOS report
+# say "bash 3.2.57" and contradict the guide's "your shell is zsh".
+login_shell="${SHELL:-unknown}"
 shell_version="bash ${BASH_VERSION:-unknown}"
 
 # Each check appends one "| item | status | fix |" row to these arrays.
@@ -128,10 +133,22 @@ fi
 # one campus NAT hits Docker Hub's anonymous pull limit, which would paint red
 # lines that say nothing about the student's machine. This proves the daemon is
 # installed and answering, which is what we need to know today.
+#
+# The fix hint has to match the machine: a Mac told to "use the WSL2 backend"
+# has been handed a Windows instruction and a dead end.
+case "$(uname -s)" in
+  Darwin)
+    docker_fix="install Docker Desktop for Mac and open it once from Applications (not needed until session 16)"
+    ;;
+  *)
+    docker_fix="install Docker Desktop with the WSL2 backend, enable WSL integration for your Ubuntu distro, and start it (not needed until session 16)"
+    ;;
+esac
+
 if command -v docker >/dev/null 2>&1 && docker info >/dev/null 2>&1; then
   record_later "Docker daemon reachable" "" 0
 else
-  record_later "Docker daemon reachable" "install Docker Desktop with the WSL2 backend and start it (not needed until session 16)" 1
+  record_later "Docker daemon reachable" "$docker_fix" 1
 fi
 
 # --- assemble the report --------------------------------------------------
@@ -141,7 +158,8 @@ fi
   echo
   echo "- Generated: $now"
   echo "- Machine: $os"
-  echo "- Shell: $shell_version"
+  echo "- Login shell: $login_shell"
+  echo "- Script ran under: $shell_version"
   echo
   echo "## Needed to start the course"
   echo
