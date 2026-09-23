@@ -36,13 +36,16 @@ ticket, not a crisis.**
 | **uv** | Installs Python and your project's dependencies, reproducibly. |
 | **git** | Version control. Module 4 explains it; today you just need it working. |
 | **GitHub** (SSH key) | Where your group repository lives. |
-| **Docker Desktop** | Containers. Not needed until session 16 — see the note under each OS. |
+| **Docker Desktop** | Containers. Not needed until session 15 — installed at home, from [`02-docker-setup.md`](02-docker-setup.md). |
 
 > **About Docker, today.** Docker Desktop is a ~600 MB download. **If you are on the ESADE
 > wifi during the lab, do not start it** — sixty simultaneous downloads slow the room down
 > for everyone, including people still installing the things that *are* on today's critical
-> path. Install it at home, any time before session 16. A red Docker line on your setup
-> report is fine and expected.
+> path. A red Docker line on your setup report is fine and expected.
+>
+> You install it at home instead, from [`02-docker-setup.md`](02-docker-setup.md), **any
+> time before session 15 (Tuesday 10 November)** — the first session that runs containers
+> in the room.
 
 Find your operating system below and follow only that section.
 
@@ -150,13 +153,9 @@ GitHub "does not provide shell access" — that is expected, not an error.)
 
 ### 5. Docker Desktop — at home, not in the lab
 
-Install [Docker Desktop](https://www.docker.com/products/docker-desktop/). In its
-settings, enable **Use the WSL 2 based engine** and, under **Resources → WSL integration**,
-turn on your Ubuntu distro. Test from the Ubuntu shell:
-
-```bash
-docker run --rm hello-world
-```
+Skip it today; a red Docker line in your report is expected. Install it at home before
+session 15, following [`02-docker-setup.md`](02-docker-setup.md), which has the WSL
+integration step that everybody forgets.
 
 Then jump to **Run the check**.
 
@@ -239,13 +238,9 @@ You want `Hi <your-username>! You've successfully authenticated`.
 
 ### 5. Docker Desktop — at home, not in the lab
 
-Install [Docker Desktop for Mac](https://www.docker.com/products/docker-desktop/),
-choosing the **Apple Silicon** or **Intel** build to match your machine. Open it once from
-Applications so macOS lets it run (see troubleshooting §7 if it refuses), then:
-
-```bash
-docker run --rm hello-world
-```
+Skip it today; a red Docker line in your report is expected. Install it at home before
+session 15, following [`02-docker-setup.md`](02-docker-setup.md), which covers the Apple
+Silicon / Intel choice and Gatekeeper.
 
 Then jump to **Run the check**.
 
@@ -293,8 +288,8 @@ then test with `ssh -T git@github.com`.
 
 ### 4. Docker — at home, not in the lab
 
-Docker Engine from your package manager is fine; you do **not** need Docker Desktop. Add
-yourself to the `docker` group and log out and back in, then `docker run --rm hello-world`.
+Skip it today. You want Docker Engine, not Docker Desktop; the steps are in
+[`02-docker-setup.md`](02-docker-setup.md), to do at home before session 15.
 
 ---
 
@@ -361,9 +356,9 @@ problem is.
 | `wsl --install` fails, or Ubuntu never appears | §1 |
 | "This app can't run on your PC" when you open Ubuntu | §9 |
 | `Failed to connect to system scope bus` during `apt upgrade` | not an error — Windows step 1 |
-| `docker: command not found` inside WSL | §2 |
-| `permission denied ... unix:///var/run/docker.sock` | §11 |
-| "Docker Desktop cannot be opened because the developer cannot be verified" | §7 |
+| `docker: command not found` inside WSL | [`02-docker-setup.md`](02-docker-setup.md) §1 |
+| `permission denied ... unix:///var/run/docker.sock` | [`02-docker-setup.md`](02-docker-setup.md) §2 |
+| "Docker Desktop cannot be opened because the developer cannot be verified" | [`02-docker-setup.md`](02-docker-setup.md) §3 |
 | `Are you sure you want to continue connecting (yes/no/[fingerprint])?` | §10 |
 | `Permission denied (publickey)`, or `git push` asks for a password | §3 |
 | `uv: command not found` | §4 |
@@ -385,12 +380,8 @@ will not open, see §9.
 
 ### 2. `docker: command not found` inside WSL, but Docker Desktop is running *(Windows)*
 
-Docker Desktop is not sharing itself with your WSL distro. Docker Desktop → **Settings →
-Resources → WSL integration** → enable your Ubuntu distro → **Apply & restart**. Open a new
-Ubuntu shell.
-
-If `docker` is found but refuses with *permission denied*, that is a different problem —
-see §11.
+Moved, with the rest of the Docker material, to
+[`02-docker-setup.md`](02-docker-setup.md) §1.
 
 ### 3. `git push` asks for a username and password, or `Permission denied (publickey)`
 
@@ -450,9 +441,7 @@ git clone git@github.com:esade-swdev-2026/software-development-course-materials.
 
 ### 7. "Docker Desktop cannot be opened because the developer cannot be verified" *(macOS)*
 
-Gatekeeper. **System Settings → Privacy & Security**, scroll to the bottom, and click
-**Open Anyway** next to the Docker message. Or right-click the app in Applications and
-choose **Open** rather than double-clicking it.
+Moved to [`02-docker-setup.md`](02-docker-setup.md) §3.
 
 ### 8. `! [rejected] ... (non-fast-forward)` when you push
 
@@ -492,25 +481,6 @@ Type `yes` — the whole word — and press Enter. You will not be asked again.
 It happens on **every** operating system, at the `ssh -T git@github.com` step. The setup
 check script never shows it to you, because it accepts new hosts on its own.
 
-### 11. `permission denied while trying to connect to the Docker daemon socket` *(Windows)*
+### 11. `permission denied while trying to connect to the Docker daemon socket`
 
-```
-docker: permission denied while trying to connect to the Docker daemon socket
-at unix:///var/run/docker.sock
-```
-
-Docker is installed and shared with WSL — see §2 if it is not — but your Linux user is not
-in the `docker` group. In the Ubuntu shell:
-
-```bash
-sudo usermod -aG docker $USER
-```
-
-Then, from **PowerShell**, stop the whole WSL virtual machine:
-
-```powershell
-wsl --shutdown
-```
-
-Opening a new shell is not enough; group membership is only picked up when the VM itself
-restarts. Reopen Ubuntu and run `docker run --rm hello-world` again.
+Moved to [`02-docker-setup.md`](02-docker-setup.md) §2.

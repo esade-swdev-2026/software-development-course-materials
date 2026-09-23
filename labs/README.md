@@ -9,7 +9,8 @@ copy-pasteable, and fixed when it is wrong.
 | Lab | Module | In class | Status |
 |---|---|---|---|
 | [`00-setup.md`](00-setup.md) | Setup | ★ session 3 | available |
-| `01-scaffold.md` | M2 Clean code | ★ session 5 | later |
+| [`01-scaffold.md`](01-scaffold.md) | M2 Clean code | ★ session 5 | available |
+| [`02-docker-setup.md`](02-docker-setup.md) | Setup | — homework, before session 15 | available |
 | `06-clean-architecture.md` | M3 Terminal | — | later |
 | `07-refactor.md` | M2 Clean code | ★ session 7 | later |
 | `08-tdd.md` | M2 Testing | ★ session 8 | later |
