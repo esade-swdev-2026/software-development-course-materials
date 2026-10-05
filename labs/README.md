@@ -12,7 +12,7 @@ copy-pasteable, and fixed when it is wrong.
 | [`01-scaffold.md`](01-scaffold.md) | M2 Clean code | ★ session 5 | available |
 | [`02-docker-setup.md`](02-docker-setup.md) | Setup | — homework, before session 15 | available |
 | `06-clean-architecture.md` | M3 Terminal | — | later |
-| `07-refactor.md` | M2 Clean code | ★ session 7 | later |
+| [`07-refactor.md`](07-refactor.md) | M2 Clean code | ★ session 7 | available |
 | `08-tdd.md` | M2 Testing | ★ session 8 | later |
 | `09-terminal-1..4.md` | M3 Terminal | session 9 | later |
 | `10-wrangling.md` | M3 Terminal | ★ session 10 | later |
