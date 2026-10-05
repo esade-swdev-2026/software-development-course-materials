@@ -1,0 +1,21 @@
+labs/07-refactor.md
+  s_1d6ffe3526c2e9::t_9c921a29c03922 1-189
+labs/README.md
+  s_1d6ffe3526c2e9::t_3637bab184ff76 15
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "1c989669183a6d4bf2bb025e2ed150f02dac5c6a",
+  "prompts": {},
+  "sessions": {
+    "s_1d6ffe3526c2e9": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "d21be928-45d8-4b4b-b48d-50d4ff649818",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Alberto Camara <camara@protonmail.com>"
+    }
+  }
+}
