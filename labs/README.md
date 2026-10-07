@@ -13,7 +13,7 @@ copy-pasteable, and fixed when it is wrong.
 | [`02-docker-setup.md`](02-docker-setup.md) | Setup | — homework, before session 15 | available |
 | `06-clean-architecture.md` | M3 Terminal | — | later |
 | [`07-refactor.md`](07-refactor.md) | M2 Clean code | ★ session 7 | available |
-| `08-tdd.md` | M2 Testing | ★ session 8 | later |
+| [`08-tdd.md`](08-tdd.md) | M2 Testing | ★ session 8 | available |
 | `09-terminal-1..4.md` | M3 Terminal | session 9 | later |
 | `10-wrangling.md` | M3 Terminal | ★ session 10 | later |
 | `10-bash.md` | M3 Terminal | session 10 | later |
