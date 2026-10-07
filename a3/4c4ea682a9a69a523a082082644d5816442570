@@ -1,0 +1,21 @@
+labs/08-tdd.md
+  s_bcac12b3704981::t_8eab82244342e4 1-141
+labs/README.md
+  s_bcac12b3704981::t_b5aee991c2c923 16
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "a34c4ea682a9a69a523a082082644d5816442570",
+  "prompts": {},
+  "sessions": {
+    "s_bcac12b3704981": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "a00e1e4b-0a3c-4b73-b056-1bbb4a193566",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Alberto Camara <camara@protonmail.com>"
+    }
+  }
+}
