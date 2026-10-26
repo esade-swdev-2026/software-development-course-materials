@@ -8,7 +8,7 @@ repo only so it does not collide with planning-repo files.
 
 Course materials for **Software Development for Business** (ESADE · Autumn 2026 · Alberto
 Cámara). This repository holds the setup lab, the lab library, and the environment check
-script. Please refer to Moodle for other teaching materials.
+script. Everything else students need is on Moodle.
 
 ## What is here
 
