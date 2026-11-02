@@ -19,7 +19,7 @@ copy-pasteable, and fixed when it is wrong.
 | [`10-bash.md`](10-bash.md), [`10-kpi-analyzer.md`](10-kpi-analyzer.md) | M3 Terminal | session 10, homework | available |
 | [`11-git-model.md`](11-git-model.md) | M4 Git | ★ session 11 | available |
 | [`12-branches.md`](12-branches.md) | M4 Git | ★ session 12 | available |
-| `13-git-5..7.md` | M4 Git | session 13 | later |
+| [`13-git.md`](13-git.md) | M4 Git | ★ session 13 | available |
 | `14-review.md` | M4 Git | ★ session 14 | later |
 | `15-docker-1..2.md` | M5 Docker | session 15 | later |
 | `16-containerize.md` | M5 Docker | ★ session 16 | later |
