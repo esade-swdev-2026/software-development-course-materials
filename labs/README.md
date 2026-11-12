@@ -22,7 +22,7 @@ copy-pasteable, and fixed when it is wrong.
 | [`13-git.md`](13-git.md) | M4 Git | ★ session 13 | available |
 | [`14-review.md`](14-review.md) | M4 Git | ★ session 14 | available |
 | [`15-docker-1.md`](15-docker-1.md), [`15-docker-2.md`](15-docker-2.md) | M5 Docker | ★ session 15 | available |
-| `16-containerize.md` | M5 Docker | ★ session 16 | later |
+| [`16-containerize.md`](16-containerize.md) | M5 Docker | ★ session 16 | available |
 | `17-compose.md`, `17-networking.md` | M5 Docker | session 17 | later |
 | `18-registry-deploy.md` | M5 Docker | ★ session 18 | later |
 
