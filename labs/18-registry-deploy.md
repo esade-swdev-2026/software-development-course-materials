@@ -29,7 +29,8 @@ GitHub → your avatar → **Settings → Developer settings → Personal access
 - Scopes: tick **`write:packages`** only (it ticks `read:packages` too)
 
 Copy the token now: GitHub shows it once. Treat it like a password: not in a file in your repo,
-not in a chat, never in a Dockerfile.
+not in a chat, never in a Dockerfile. Keep it in your password manager until Sunday: Lab 2 §4
+and the `v1.0` check need it again.
 
 ### 2. Log in, tag, push
 
